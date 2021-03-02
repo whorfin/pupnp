@@ -106,20 +106,22 @@ typedef enum Upnp_LogLevel_e
  *
  * \return -1 if fails or UPNP_E_SUCCESS if succeeds.
  */
-#ifdef DEBUG
 int UpnpInitLog(void);
-#else
-static UPNP_INLINE int UpnpInitLog(void) { return UPNP_E_SUCCESS; }
+
+#if defined NDEBUG && !defined UPNP_DEBUG_C
+#define UpnpInitLog UpnpInitLog_Inlined
+static UPNP_INLINE int UpnpInitLog_Inlined(void) { return UPNP_E_SUCCESS; }
 #endif
 /*!
  * \brief Set the log level (see \c Upnp_LogLevel).
  */
-#ifdef DEBUG
 void UpnpSetLogLevel(
 	/*! [in] Log level. */
 	Upnp_LogLevel log_level);
-#else
-static UPNP_INLINE void UpnpSetLogLevel(Upnp_LogLevel log_level)
+
+#if defined NDEBUG && !defined UPNP_DEBUG_C
+#define UpnpSetLogLevel UpnpSetLogLevel_Inlined
+static UPNP_INLINE void UpnpSetLogLevel_Inlined(Upnp_LogLevel log_level)
 {
 	(void)log_level;
 	return;
@@ -129,10 +131,11 @@ static UPNP_INLINE void UpnpSetLogLevel(Upnp_LogLevel log_level)
 /*!
  * \brief Closes the log files.
  */
-#ifdef DEBUG
 void UpnpCloseLog(void);
-#else
-static UPNP_INLINE void UpnpCloseLog(void) {}
+
+#if defined NDEBUG && !defined UPNP_DEBUG_C
+#define UpnpCloseLog UpnpCloseLog_Inlined
+static UPNP_INLINE void UpnpCloseLog_Inlined(void) {}
 #endif
 
 /*!
@@ -140,14 +143,15 @@ static UPNP_INLINE void UpnpCloseLog(void) {}
  * second parameter has been kept for compatibility but is ignored.
  * Use a NULL file name for logging to stderr.
  */
-#ifdef DEBUG
 void UpnpSetLogFileNames(
 	/*! [in] Name of the log file. */
 	const char *fileName,
 	/*! [in] Ignored. */
 	const char *Ignored);
-#else
-static UPNP_INLINE void UpnpSetLogFileNames(
+
+#if defined NDEBUG && !defined UPNP_DEBUG_C
+#define UpnpSetLogFileNames UpnpSetLogFileNames_Inlined
+static UPNP_INLINE void UpnpSetLogFileNames_Inlined(
 	const char *ErrFileName, const char *ignored)
 {
 	(void)ErrFileName;
@@ -163,15 +167,16 @@ static UPNP_INLINE void UpnpSetLogFileNames(
  * \return NULL if the module is turn off for debug otherwise returns the
  *	right FILE pointer.
  */
-#ifdef DEBUG
 FILE *UpnpGetDebugFile(
 	/*! [in] The level of the debug logging. It will decide whether debug
 	 * statement will go to standard output, or any of the log files. */
 	Upnp_LogLevel level,
 	/*! [in] debug will go in the name of this module. */
 	Dbg_Module module);
-#else
-static UPNP_INLINE FILE *UpnpGetDebugFile(
+
+#if defined NDEBUG && !defined UPNP_DEBUG_C
+#define UpnpGetDebugFile UpnpGetDebugFile_Inlined
+static UPNP_INLINE FILE *UpnpGetDebugFile_Inlined(
 	Upnp_LogLevel level, Dbg_Module module)
 {
 	(void)level;
@@ -184,7 +189,6 @@ static UPNP_INLINE FILE *UpnpGetDebugFile(
  * \brief Prints the debug statement either on the standard output or log file
  * along with the information from where this debug statement is coming.
  */
-#ifdef DEBUG
 void UpnpPrintf(
 	/*! [in] The level of the debug logging. It will decide whether debug
 	 * statement will go to standard output, or any of the log files. */
@@ -206,19 +210,21 @@ void UpnpPrintf(
 	__attribute__((format(__printf__, 5, 6)))
 #endif
 	;
-#else /* DEBUG */
-static UPNP_INLINE void UpnpPrintf(Upnp_LogLevel DLevel,
-	Dbg_Module Module,
-	const char *DbgFileName,
-	int DbgLineNo,
-	const char *FmtStr,
-	...)
-#if (__GNUC__ >= 3)
-	/* This enables printf like format checking by the compiler. */
-	__attribute__((format(__printf__, 5, 6)))
-#endif
-	;
-static UPNP_INLINE void UpnpPrintf(Upnp_LogLevel DLevel,
+	
+#if defined NDEBUG && !defined UPNP_DEBUG_C
+#define UpnpPrintf UpnpPrintf_Inlined
+// static UPNP_INLINE void UpnpPrintf_Inlined(Upnp_LogLevel DLevel,
+// 	Dbg_Module Module,
+// 	const char *DbgFileName,
+// 	int DbgLineNo,
+// 	const char *FmtStr,
+// 	...)
+// #if (__GNUC__ >= 3)
+// 	/* This enables printf like format checking by the compiler. */
+// 	__attribute__((format(__printf__, 5, 6)))
+// #endif
+// 	;
+static UPNP_INLINE void UpnpPrintf_Inlined(Upnp_LogLevel DLevel,
 	Dbg_Module Module,
 	const char *DbgFileName,
 	int DbgLineNo,

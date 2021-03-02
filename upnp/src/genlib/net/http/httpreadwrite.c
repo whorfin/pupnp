@@ -55,7 +55,6 @@
 #include "uri.h"
 #include "webserver.h"
 
-#include <alloca.h>
 #include <assert.h>
 #include <stdarg.h>
 #include <string.h>
@@ -66,13 +65,14 @@
 	#if defined(_MSC_VER) && _MSC_VER < 1900
 		#define snprintf _snprintf
 	#endif
-#else
+#else /* _WIN32 */
+	#include <alloca.h>
 	#include <arpa/inet.h>
 	#include <sys/time.h>
 	#include <sys/types.h>
 	#include <sys/utsname.h>
 	#include <sys/wait.h>
-#endif
+#endif /* _WIN32 */
 
 /*
  * Please, do not change these to const int while MSVC cannot understand
@@ -2285,7 +2285,7 @@ void get_sdk_info(char *info, size_t infoSize)
 		snprintf(info,
 			infoSize,
 			"%d.%d.%d %d/%s, UPnP/1.0, Portable SDK for UPnP "
-			"devices/" PACKAGE_VERSION "\r\n",
+			"devices/" UPNP_VERSION_STRING "\r\n",
 			versioninfo.dwMajorVersion,
 			versioninfo.dwMinorVersion,
 			versioninfo.dwBuildNumber,
@@ -2303,7 +2303,7 @@ void get_sdk_info(char *info, size_t infoSize)
 	snprintf(info,
 		infoSize,
 		"%s/%s, UPnP/1.0, Portable SDK for UPnP "
-		"devices/" PACKAGE_VERSION "\r\n",
+		"devices/" UPNP_VERSION_STRING "\r\n",
 		sys_info.sysname,
 		sys_info.release);
 	#endif
